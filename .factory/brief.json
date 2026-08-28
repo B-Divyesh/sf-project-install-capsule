@@ -1,0 +1,11 @@
+{
+  "slug": "project-install-capsule",
+  "title": "Project Install Capsule",
+  "territory": "devtools-data",
+  "user": "Developers trying an unfamiliar GitHub project who need an easy, reviewable way to install and run it without granting it their home directory, credentials, or unrestricted network.",
+  "smallest_useful_product": "A CLI that generates a rootless container capsule from a declared install command, exposes only an empty workspace and approved ports, shows a capability diff before run, and writes a teardown receipt.",
+  "success_measure": "A user can run a sample project in under five minutes and verification confirms it cannot read a seeded home-directory secret or reach an undeclared host.",
+  "artifact_class": "cli",
+  "monetization": "free",
+  "constraints": "Containers are not complete security boundaries; rootless defaults, explicit network allowlists, and no implicit host mounts are mandatory."
+}
