@@ -8,7 +8,7 @@ It is for developers who want to try a repository without turning a broad Docker
 
 ## Install
 
-Requires Go 1.23+ to build, and rootless Podman 5+ (recommended) or rootless Docker 27+ to run.
+Requires Go 1.22+ to build, and rootless Podman 5+ (recommended) or rootless Docker 27+ to run.
 
 ```sh
 go install github.com/B-Divyesh/sf-project-install-capsule/cmd/capsule@latest
@@ -39,7 +39,7 @@ capsule run
 ```json
 {
   "version": 1,
-  "image": "docker.io/library/node:22-alpine",
+  "image": "docker.io/library/node:22-bookworm",
   "install": "git clone https://github.com/owner/project.git .",
   "run": "npm install && npm run dev -- --host 127.0.0.1",
   "allow_hosts": ["github.com", "registry.npmjs.org"],
@@ -52,8 +52,11 @@ Automation can use JSON and dry-run output without prompts:
 ```sh
 capsule inspect --json
 capsule run --dry-run --json
+capsule verify --json
 capsule teardown --json
 ```
+
+`capsule verify` performs live probes in the configured image: it seeds a temporary host-home secret, confirms the container cannot read it, confirms direct egress fails, and confirms the proxy rejects an undeclared host. Use `capsule verify --static` when an engine is intentionally unavailable (for example in a config-lint job).
 
 Exit codes are `0` success, `2` invalid arguments/configuration, `3` engine unavailable or not rootless, and `4` runtime failure. `CAPSULE_ENGINE` may select an explicit `podman` or `docker` executable. No telemetry is collected.
 
