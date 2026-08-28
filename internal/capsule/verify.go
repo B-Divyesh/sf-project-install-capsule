@@ -1,6 +1,7 @@
 package capsule
 
 import (
+	"bytes"
 	"context"
 	"crypto/rand"
 	"encoding/hex"
@@ -78,7 +79,8 @@ func VerifyIsolation(ctx context.Context, c Config, configPath string) (VerifyRe
 		return VerifyResult{}, fmt.Errorf("isolation probe failed: %s", compactOutput(out, err))
 	}
 	var result VerifyResult
-	if err := json.Unmarshal(out, &result); err != nil {
+	line := lastJSONLine(out)
+	if err := json.Unmarshal(line, &result); err != nil {
 		return VerifyResult{}, fmt.Errorf("decode isolation probe: %w (%s)", err, string(out))
 	}
 	result.RootlessEngine = true
@@ -86,6 +88,17 @@ func VerifyIsolation(ctx context.Context, c Config, configPath string) (VerifyRe
 		return result, errors.New("one or more live isolation checks failed")
 	}
 	return result, nil
+}
+
+func lastJSONLine(output []byte) []byte {
+	lines := bytes.Split(bytes.TrimSpace(output), []byte{'\n'})
+	for i := len(lines) - 1; i >= 0; i-- {
+		line := bytes.TrimSpace(lines[i])
+		if len(line) > 1 && line[0] == '{' {
+			return line
+		}
+	}
+	return nil
 }
 
 func SelfTest(hostSecret, denyHost string) (VerifyResult, error) {

@@ -1,5 +1,5 @@
 const CACHE = 'capsule-shell-v1';
-const SHELL = ['/', '/privacy/', '/terms/', '/capsule-poster.webp'];
+const SHELL = [/* ASSET_MANIFEST */ '/', '/privacy/', '/terms/', '/capsule-poster.webp'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(SHELL)));

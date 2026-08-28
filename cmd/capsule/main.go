@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/B-Divyesh/sf-project-install-capsule/internal/capsule"
@@ -22,7 +23,7 @@ Usage:
   capsule inspect [options]    Show the capability diff; execute nothing
   capsule run [options]        Review, install, and run in a rootless capsule
   capsule teardown [options]   Remove a stale capsule and write a receipt
-  capsule verify [options]     Verify the generated isolation arguments
+  capsule verify [options]     Probe home and network isolation live
   capsule version              Print the version
 
 Common options:
@@ -51,8 +52,8 @@ type intList []int
 
 func (s *intList) String() string { return fmt.Sprint([]int(*s)) }
 func (s *intList) Set(v string) error {
-	var n int
-	if _, err := fmt.Sscanf(v, "%d", &n); err != nil {
+	n, err := strconv.Atoi(v)
+	if err != nil {
 		return fmt.Errorf("expected a port number, got %q", v)
 	}
 	*s = append(*s, n)
@@ -97,8 +98,12 @@ func execute(ctx context.Context, args []string, stdout, stderr *os.File) int {
 	if err == nil {
 		return 0
 	}
+	if errors.Is(err, flag.ErrHelp) {
+		return 0
+	}
 	fmt.Fprintf(stderr, "capsule: %v\n", err)
-	if strings.Contains(err.Error(), "engine") || strings.Contains(err.Error(), "rootless") {
+	lowerError := strings.ToLower(err.Error())
+	if strings.Contains(lowerError, "engine") || strings.Contains(lowerError, "rootless") {
 		return 3
 	}
 	var exitErr *runtimeError
@@ -205,6 +210,9 @@ func teardownCommand(ctx context.Context, args []string, stdout, stderr io.Write
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
+	if fs.NArg() != 0 {
+		return fmt.Errorf("unexpected arguments: %s", strings.Join(fs.Args(), " "))
+	}
 	c, err := capsule.LoadConfig(*configPath)
 	if err != nil {
 		return err
@@ -232,6 +240,9 @@ func verifyCommand(ctx context.Context, args []string, stdout, stderr io.Writer)
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
+	if fs.NArg() != 0 {
+		return fmt.Errorf("unexpected arguments: %s", strings.Join(fs.Args(), " "))
+	}
 	c, err := capsule.LoadConfig(*configPath)
 	if err != nil {
 		return err
@@ -239,7 +250,10 @@ func verifyCommand(ctx context.Context, args []string, stdout, stderr io.Writer)
 	if !*static {
 		result, err := capsule.VerifyIsolation(ctx, c, *configPath)
 		if err != nil {
-			return err
+			if strings.Contains(strings.ToLower(err.Error()), "engine") || strings.Contains(strings.ToLower(err.Error()), "rootless") {
+				return err
+			}
+			return &runtimeError{err}
 		}
 		if *jsonOut {
 			return json.NewEncoder(stdout).Encode(result)
@@ -253,9 +267,17 @@ func verifyCommand(ctx context.Context, args []string, stdout, stderr io.Writer)
 	name := "capsule-" + capsule.ConfigID(*configPath)
 	generated := capsule.RuntimeArgs(c, name, "/tmp/capsule-verify", "/path/to/capsule")
 	joined := strings.Join(generated, "\x00")
+	homeMounted := false
+	if home := os.Getenv("HOME"); home != "" {
+		for _, argument := range generated {
+			if strings.HasPrefix(argument, "type=bind,src="+home+",") {
+				homeMounted = true
+			}
+		}
+	}
 	checks := map[string]bool{
 		"network denied":        strings.Contains(joined, "--network=none"),
-		"host home not mounted": !strings.Contains(joined, os.Getenv("HOME")),
+		"host home not mounted": !homeMounted,
 		"read-only root":        strings.Contains(joined, "--read-only"),
 		"capabilities dropped":  strings.Contains(joined, "--cap-drop=ALL"),
 		"no new privileges":     strings.Contains(joined, "--security-opt=no-new-privileges"),

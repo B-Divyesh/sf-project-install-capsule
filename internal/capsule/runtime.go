@@ -58,6 +58,12 @@ func Run(ctx context.Context, c Config, opts RunOptions) (string, error) {
 	configID := ConfigID(opts.ConfigPath)
 	containerName := "capsule-" + configID
 	runtimeDir := filepath.Join(os.TempDir(), containerName)
+	if !opts.DryRun {
+		runtimeDir, err = os.MkdirTemp("", containerName+"-")
+		if err != nil {
+			return "", fmt.Errorf("create ephemeral bridge directory: %w", err)
+		}
+	}
 	args := RuntimeArgs(c, containerName, runtimeDir, executable)
 	preview := RunPreview{Engine: engine.Kind, Container: containerName, Arguments: args, Capabilities: Review(opts.ConfigPath, c)}
 	if opts.DryRun {
@@ -70,13 +76,10 @@ func Run(ctx context.Context, c Config, opts RunOptions) (string, error) {
 		return "", nil
 	}
 
-	if err := os.RemoveAll(runtimeDir); err != nil {
-		return "", fmt.Errorf("reset ephemeral bridge directory: %w", err)
-	}
-	if err := os.Mkdir(runtimeDir, 0o711); err != nil {
-		return "", fmt.Errorf("create ephemeral bridge directory: %w", err)
-	}
 	defer os.RemoveAll(runtimeDir)
+	if err := os.Chmod(runtimeDir, 0o711); err != nil {
+		return "", fmt.Errorf("set ephemeral bridge permissions: %w", err)
+	}
 	proxy, err := StartAllowProxy(filepath.Join(runtimeDir, "outbound.sock"), c.AllowHosts)
 	if err != nil {
 		return "", err
@@ -96,7 +99,13 @@ func Run(ctx context.Context, c Config, opts RunOptions) (string, error) {
 	runCtx, stop := signal.NotifyContext(ctx, os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	cmd := exec.CommandContext(runCtx, engine.Path, args...)
-	cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, opts.Stdout, opts.Stderr
+	cmd.Stdin, cmd.Stderr = os.Stdin, opts.Stderr
+	cmd.Stdout = opts.Stdout
+	if opts.JSON {
+		// Keep the final machine-readable result on stdout; workload logs belong
+		// on stderr in automation mode.
+		cmd.Stdout = opts.Stderr
+	}
 	runErr := cmd.Run()
 	_, _ = exec.CommandContext(context.Background(), engine.Path, "rm", "-f", containerName).CombinedOutput()
 	exitCode := 0

@@ -8,10 +8,10 @@ It is for developers who want to try a repository without turning a broad Docker
 
 ## Install
 
-Requires Go 1.22+ to build, and rootless Podman 5+ (recommended) or rootless Docker 27+ to run.
+Requires a Linux host, Go 1.22+ to build, and rootless Podman 5+ (recommended) or rootless Docker 27+ to run. The distributed binaries are fully static so the same executable can act as the bridge inside Linux containers.
 
 ```sh
-go install github.com/B-Divyesh/sf-project-install-capsule/cmd/capsule@latest
+CGO_ENABLED=0 go install github.com/B-Divyesh/sf-project-install-capsule/cmd/capsule@latest
 capsule --help
 ```
 

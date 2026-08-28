@@ -8,7 +8,6 @@ import (
 	"io"
 	"net"
 	"net/http"
-	"net/url"
 	"os"
 	"strings"
 	"sync"
@@ -179,12 +178,4 @@ func copyBoth(a, b net.Conn) {
 	go func() { _, _ = io.Copy(a, b); done <- struct{}{} }()
 	go func() { _, _ = io.Copy(b, a); done <- struct{}{} }()
 	<-done
-}
-
-func parseProxyURL(raw string) (*url.URL, error) {
-	u, err := url.Parse(raw)
-	if err != nil || u.Scheme != "http" || u.Host == "" {
-		return nil, errors.New("invalid HTTP proxy URL")
-	}
-	return u, nil
 }

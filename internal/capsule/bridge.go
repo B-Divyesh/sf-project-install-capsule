@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
 	"net"
 	"os"
 	"os/exec"
@@ -162,9 +161,4 @@ func (p *PortPublisher) Close() {
 
 func PortSocket(runtimeDir string, port int) string {
 	return fmt.Sprintf("%s/port-%d.sock", strings.TrimSuffix(runtimeDir, "/"), port)
-}
-
-func waitGroupCopy(dst io.Writer, src io.Reader, wg *sync.WaitGroup) {
-	defer wg.Done()
-	_, _ = io.Copy(dst, src)
 }
