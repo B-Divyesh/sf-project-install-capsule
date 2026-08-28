@@ -1,6 +1,5 @@
 node_modules/
 dist/
-.env
+.capsule/
+.factory/generated/
 *.log
-graphify-out/
-.DS_Store

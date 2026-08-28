@@ -1,0 +1,24 @@
+{
+  "name": "project-install-capsule",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Rootless, least-privilege install capsules for unfamiliar projects",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite --config site/vite.config.ts",
+    "test": "go test ./... && node --test site/tests/*.test.mjs",
+    "build": "node scripts/build.mjs",
+    "build:site": "vite build --config site/vite.config.ts",
+    "package": "node scripts/package.mjs",
+    "preview": "vite preview --config site/vite.config.ts"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.10.2",
+    "@fontsource-variable/league-spartan": "5.2.8",
+    "playwright": "1.58.2",
+    "vite": "7.3.6"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
