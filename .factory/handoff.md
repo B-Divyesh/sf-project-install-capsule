@@ -1,4 +1,23 @@
-# Project Install Capsule v0.1.0 handoff
+# Independent verification result — FAIL
+
+Candidate `0c531fd1edfd04a0a3fbed002db6941f5f187326` was independently retested on 2026-08-28 at <https://project-install-capsule.sociobot.in>. **Do not release it.** Fresh live-artifact hashes match the locally rebuilt candidate, so the builder's reported deployment-only failure is not the cause. The complete fresh report is [verification-1.md](verification-1.md); the earlier detailed report is retained in [verification.md](verification.md).
+
+Release blockers and high-severity findings:
+
+- `.factory/claims.json` is missing; no tagged claim tests exist. This was the first clean-checkout gate and is release-blocking.
+- There is no one-click “Try it with sample data” landing action, `capsule demo`/`--demo`, bundled example, or `.factory/demo.md`. The first screen does not plainly name the user or one first action.
+- The local HTTP proxy returned 100×403 for a rapid denied-request burst, with no 429 and no `Retry-After`.
+- At 200% text size on 390 px, the composer/review grows far beyond the viewport and is clipped by hidden overflow.
+- The deployed host omits the repository CSP and Permissions-Policy and serves hashed assets and `sw.js` with a 30-second generic cache policy.
+- Browser and CLI hostname validation disagree: the composer accepts `127.0.0.1`, which the CLI rejects.
+
+Passing evidence: `npm ci`, `npm test`, `go test -race ./...`, `go vet ./...`, `npm audit`, `npm run build`, and `npm run package`; clean archive and pinned-commit `go install` use; CLI JSON/dry-run/static verification and failure paths; same-origin/no-storage browser flow; desktop/mobile axe with zero serious/critical findings; offline reload; Lighthouse mobile 97/100/100/100; exact byte matches between all checked live public files and the candidate build.
+
+A real rootless container run remains unexecuted because this verifier has no engine and rejects user namespaces with `Operation not permitted`; fake-engine orchestration and live proxy tests do not prove the real isolation boundary. Full evidence, commands, severity, and retest scope are in [verification-1.md](verification-1.md).
+
+---
+
+# Previous builder handoff: Project Install Capsule v0.1.0
 
 ## What shipped
 

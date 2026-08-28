@@ -1,0 +1,40 @@
+{
+  "viewport": {
+    "name": "desktop",
+    "width": 1440,
+    "height": 1000
+  },
+  "responseStatus": 200,
+  "finalURL": "https://project-install-capsule.sociobot.in/",
+  "title": "Project Install Capsule — Inspect before you run",
+  "h1": [
+    "Inspect the route.Then run the code."
+  ],
+  "buttons": [
+    "Copy command"
+  ],
+  "links": [
+    "Skip to main content",
+    "\n        C\n        Project Install Capsule\n      ",
+    "How it works",
+    "Try the review",
+    "Source",
+    "Install Capsule",
+    "Preview a review",
+    "Read the security model →",
+    "GitHub",
+    "Privacy",
+    "Terms"
+  ],
+  "mainText": "LINE 01 LEAST-PRIVILEGE PROJECT TRIALS\n\nINSPECT THE ROUTE.\nTHEN RUN THE CODE.\n\nGive an unfamiliar project an empty workspace, named destinations, and nothing else. Capsule prints the capability diff before a rootless container starts.\n\nINSTALL CAPSULE\nPREVIEW A REVIEW\n\n◆ Open source · No telemetry · One Go binary\n\nORIGIN\nUNFAMILIAR REPO\nDESTINATION\nREVIEWED PROCESS\n\nTHE SEALED LINE\n\nFOUR STOPS. NO HIDDEN TRANSFERS.\n\nEvery grant is visible in one small file. The defaults stay shut.\n\n01\nDECLARE\n\nName the image, install and run commands, remote hosts, and localhost ports.\n\n02\nREVIEW\n\nRead the effective filesystem, network, ports, and hardening diff before execution.\n\n03\nRUN\n\nWork happens in an empty tmpfs with a read-only root and an isolated network.\n\n04\nRECEIPT\n\nTeardown records what was granted, when it ended, and the process outcome.\n\nLOCAL PREVIEW\n\nDRAFT THE MANIFEST, SEE THE BOUNDARY.\n\nThis browser preview makes no requests and stores nothing. The real CLI validates the same hostname and port shapes.\n\nInstall command\nAllowed hosts comma-separated\nLocal ports comma-separated\n\nCAP / 001\nBEFORE DEPARTURE\nCAPABILITY REVIEW\nFILESYSTEM\n+ empty /workspace\n− host home\n− project directory\nNETWORK\n− direct egress\n+ named proxy hosts only\nPORTS\n+ approved loopback only\n− LAN binding\nPROCESS\n+ rootless engine\n+ capabilities dropped\nGENERATED COMMAND\ncapsule init \\\n+  --install 'git clone https://github.com/owner/project.git .' \\\n+  --run 'npm install && npm run dev' \\\n+  --allow-host github.com \\\n+  --allow-host registry.npmjs.org \\\n+  --port 3000\nCopy command\n\nBOARD IN TWO MINUTES\n\nONE BINARY. ONE DECLARATION.\n\nBuild with Go 1.22+, then point Capsule at rootless Podman or rootless Docker. It never prompts, so the same path works in CI.\n\nshell\n$ CGO_ENABLED=0 go install github.com/B-Divyesh/\\\n  sf-project-install-capsule/cmd/capsule@latest\n\n$ capsule init --install 'git clone … .' \\\n  --run 'npm install && npm run dev' \\\n  --allow-host github.com --port 3000\n\n$ capsule inspect\nFILESYSTEM  + empty /workspace  − host home\nNETWORK     − direct  + github.com via proxy\n\n$ capsule verify\nPASS  seeded home secret is unreadable\n!\n\nREAD THE FINE PRINT\n\nA SMALLER BLAST RADIUS, NOT A MALWARE VERDICT.\n\nCapsule checks the engine is rootless and removes common ambient access. Containers still share a host kernel. For deliberately hostile code, kernel exploits, or work near production credentials, use a disposable VM on a separate account.\n\nRead the security model\n→\n\nPLATFORM NOTES\n\nQUESTIONS BEFORE DEPARTURE\nWHY NOT JUST DOCKER?\nCAN THE PROJECT REACH MY LAN?\nWHERE DOES PROJECT DATA GO?\nDOES IT SUPPORT EVERY INSTALLER?",
+  "requests": [
+    "https://project-install-capsule.sociobot.in/",
+    "https://project-install-capsule.sociobot.in/assets/main-CGCHlymP.js",
+    "https://project-install-capsule.sociobot.in/assets/main-Bff91MoD.css",
+    "https://project-install-capsule.sociobot.in/capsule-poster.webp",
+    "https://project-install-capsule.sociobot.in/assets/league-spartan-latin-wght-normal-0z8Zi79b.woff2"
+  ],
+  "consoleErrors": [],
+  "pageErrors": [],
+  "navError": null
+}

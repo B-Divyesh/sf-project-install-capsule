@@ -1,0 +1,296 @@
+{
+  "pages": [
+    {
+      "viewport": "desktop",
+      "path": "/",
+      "status": 200,
+      "title": "Project Install Capsule — Inspect before you run",
+      "lang": "en",
+      "h1Count": 1,
+      "landmarks": {
+        "header": 1,
+        "nav": 2,
+        "main": 1,
+        "footer": 1
+      },
+      "overflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "axeSeriousCritical": [],
+      "touchTargets": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "/privacy/",
+      "status": 200,
+      "title": "Privacy — Project Install Capsule",
+      "lang": "en",
+      "h1Count": 1,
+      "landmarks": {
+        "header": 1,
+        "nav": 2,
+        "main": 1,
+        "footer": 1
+      },
+      "overflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "axeSeriousCritical": [],
+      "touchTargets": [
+        {
+          "tag": "A",
+          "text": "public source repository",
+          "width": 190,
+          "height": 19
+        }
+      ]
+    },
+    {
+      "viewport": "desktop",
+      "path": "/terms/",
+      "status": 200,
+      "title": "Terms — Project Install Capsule",
+      "lang": "en",
+      "h1Count": 1,
+      "landmarks": {
+        "header": 1,
+        "nav": 2,
+        "main": 1,
+        "footer": 1
+      },
+      "overflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "axeSeriousCritical": [],
+      "touchTargets": [
+        {
+          "tag": "A",
+          "text": "LICENSE",
+          "width": 67,
+          "height": 19
+        }
+      ]
+    },
+    {
+      "viewport": "mobile",
+      "path": "/",
+      "status": 200,
+      "title": "Project Install Capsule — Inspect before you run",
+      "lang": "en",
+      "h1Count": 1,
+      "landmarks": {
+        "header": 1,
+        "nav": 2,
+        "main": 1,
+        "footer": 1
+      },
+      "overflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "axeSeriousCritical": [],
+      "touchTargets": [
+        {
+          "tag": "A",
+          "text": "C Project Install Capsule",
+          "width": 213,
+          "height": 38
+        }
+      ]
+    },
+    {
+      "viewport": "mobile",
+      "path": "/privacy/",
+      "status": 200,
+      "title": "Privacy — Project Install Capsule",
+      "lang": "en",
+      "h1Count": 1,
+      "landmarks": {
+        "header": 1,
+        "nav": 2,
+        "main": 1,
+        "footer": 1
+      },
+      "overflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "axeSeriousCritical": [],
+      "touchTargets": [
+        {
+          "tag": "A",
+          "text": "CProject Install Capsule",
+          "width": 213,
+          "height": 38
+        },
+        {
+          "tag": "A",
+          "text": "Home",
+          "width": 41,
+          "height": 44
+        }
+      ]
+    },
+    {
+      "viewport": "mobile",
+      "path": "/terms/",
+      "status": 200,
+      "title": "Terms — Project Install Capsule",
+      "lang": "en",
+      "h1Count": 1,
+      "landmarks": {
+        "header": 1,
+        "nav": 2,
+        "main": 1,
+        "footer": 1
+      },
+      "overflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "axeSeriousCritical": [],
+      "touchTargets": [
+        {
+          "tag": "A",
+          "text": "CProject Install Capsule",
+          "width": 213,
+          "height": 38
+        },
+        {
+          "tag": "A",
+          "text": "Home",
+          "width": 41,
+          "height": 44
+        },
+        {
+          "tag": "A",
+          "text": "LICENSE",
+          "width": 67,
+          "height": 19
+        }
+      ]
+    }
+  ],
+  "offline": {
+    "controlled": true,
+    "rootOffline": true,
+    "termsOffline": true
+  },
+  "reducedMotion": {
+    "no-preference": {
+      "animationName": "register",
+      "animationDuration": "0.42s",
+      "transitionDuration": "0s",
+      "transform": "matrix(1, 0, 0, 1, 0, 0.965012)"
+    },
+    "reduce": {
+      "animationName": "register",
+      "animationDuration": "1e-05s",
+      "transitionDuration": "1e-05s",
+      "transform": "matrix(1, 0, 0, 1, 0, 0)"
+    }
+  },
+  "keyboard": {
+    "sequence": [
+      {
+        "tag": "A",
+        "text": "Skip to main content",
+        "outline": "3px solid rgb(242, 169, 59)",
+        "rect": {
+          "width": 199,
+          "height": 49
+        }
+      },
+      {
+        "tag": "A",
+        "text": "C Project Install Capsule",
+        "outline": "3px solid rgb(242, 169, 59)",
+        "rect": {
+          "width": 213,
+          "height": 38
+        }
+      },
+      {
+        "tag": "A",
+        "text": "How it works",
+        "outline": "3px solid rgb(242, 169, 59)",
+        "rect": {
+          "width": 109,
+          "height": 44
+        }
+      },
+      {
+        "tag": "A",
+        "text": "Try the review",
+        "outline": "3px solid rgb(242, 169, 59)",
+        "rect": {
+          "width": 118,
+          "height": 44
+        }
+      },
+      {
+        "tag": "A",
+        "text": "Source",
+        "outline": "3px solid rgb(242, 169, 59)",
+        "rect": {
+          "width": 57,
+          "height": 44
+        }
+      },
+      {
+        "tag": "A",
+        "text": "Install Capsule",
+        "outline": "3px solid rgb(242, 169, 59)",
+        "rect": {
+          "width": 192,
+          "height": 49
+        }
+      },
+      {
+        "tag": "A",
+        "text": "Preview a review",
+        "outline": "3px solid rgb(242, 169, 59)",
+        "rect": {
+          "width": 209,
+          "height": 49
+        }
+      },
+      {
+        "tag": "INPUT",
+        "text": "",
+        "outline": "3px solid rgb(242, 169, 59)",
+        "rect": {
+          "width": 580,
+          "height": 48
+        }
+      },
+      {
+        "tag": "INPUT",
+        "text": "",
+        "outline": "3px solid rgb(242, 169, 59)",
+        "rect": {
+          "width": 580,
+          "height": 48
+        }
+      },
+      {
+        "tag": "INPUT",
+        "text": "",
+        "outline": "3px solid rgb(242, 169, 59)",
+        "rect": {
+          "width": 580,
+          "height": 48
+        }
+      }
+    ]
+  },
+  "privacy": {
+    "requests": [
+      "https://project-install-capsule.sociobot.in/",
+      "https://project-install-capsule.sociobot.in/assets/main-CGCHlymP.js",
+      "https://project-install-capsule.sociobot.in/assets/main-Bff91MoD.css",
+      "https://project-install-capsule.sociobot.in/capsule-poster.webp",
+      "https://project-install-capsule.sociobot.in/assets/league-spartan-latin-wght-normal-0z8Zi79b.woff2"
+    ],
+    "localStorage": {},
+    "sessionStorage": {},
+    "cookies": []
+  }
+}

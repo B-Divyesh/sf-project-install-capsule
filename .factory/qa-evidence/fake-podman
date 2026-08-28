@@ -1,0 +1,16 @@
+#!/bin/sh
+case "$1" in
+  info)
+    printf '%s\n' "${FAKE_ROOTLESS:-true}"
+    ;;
+  run)
+    printf 'fake workload ran\n'
+    exit "${FAKE_RUN_EXIT:-0}"
+    ;;
+  rm)
+    exit 0
+    ;;
+  *)
+    exit 1
+    ;;
+esac
