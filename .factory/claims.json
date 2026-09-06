@@ -1,0 +1,58 @@
+[
+  {
+    "id": "cli-demo",
+    "claim": "capsule demo creates a fresh sample folder and prints its capability review.",
+    "where": "landing terminal, README, examples/hello-world",
+    "test": "npm run test:claim -- @claim:cli-demo",
+    "sandbox": "fresh temporary directory; bundled sample input; installed-style binary built from the clean checkout"
+  },
+  {
+    "id": "runtime-boundary",
+    "claim": "The sample dry run shows an empty workspace, no host-home mount, no direct container network, and loopback-only ports.",
+    "where": "README security model, landing how-it-works section",
+    "test": "npm run test:claim -- @claim:runtime-boundary",
+    "sandbox": "fresh capsule demo; inspect the observable dry-run JSON before an engine starts"
+  },
+  {
+    "id": "teardown-receipt",
+    "claim": "A completed sample run writes a local receipt with owner-only permissions.",
+    "where": "README usage",
+    "test": "npm run test:claim -- @claim:teardown-receipt",
+    "sandbox": "fresh capsule demo with a rootless fake engine; inspect the receipt path, JSON outcome, and file mode"
+  },
+  {
+    "id": "proxy-rate-limit",
+    "claim": "A rapid local proxy burst is throttled with HTTP 429 and Retry-After.",
+    "where": "README security model",
+    "test": "go test ./internal/capsule -run '^TestClaimProxyRateLimit$'",
+    "sandbox": "fresh Unix-socket proxy; repeated denied sample requests"
+  },
+  {
+    "id": "demo-sandbox",
+    "claim": "The web demo keeps sample edits separate, resets them, and discards them when you start for real.",
+    "where": "demo banner, .factory/demo.md",
+    "test": "npm run test:claim -- @claim:demo-sandbox",
+    "sandbox": "fresh browser context at ?demo=1; edit, reset, then leave demo"
+  },
+  {
+    "id": "preview-private",
+    "claim": "Changing the normal browser preview sends no requests and writes no storage.",
+    "where": "landing preview section",
+    "test": "npm run test:claim -- @claim:preview-private",
+    "sandbox": "fresh browser context; record requests and storage during a preview edit"
+  },
+  {
+    "id": "preview-host-rule",
+    "claim": "The browser preview accepts named hosts and rejects IP addresses.",
+    "where": "landing preview section",
+    "test": "npm run test:claim -- @claim:preview-host-rule",
+    "sandbox": "fresh browser context at ?demo=1; test a DNS root dot and an IPv4 literal"
+  },
+  {
+    "id": "site-privacy",
+    "claim": "The site uses no third-party requests, cookies, or normal browser storage.",
+    "where": "privacy page",
+    "test": "npm run test:claim -- @claim:site-privacy",
+    "sandbox": "fresh browser context; record every privacy-page request plus cookie and storage state"
+  }
+]

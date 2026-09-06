@@ -1,0 +1,1 @@
+Run unfamiliar GitHub projects with a reviewable rootless container and named network access.

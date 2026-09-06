@@ -25,6 +25,8 @@ Desktop presents the poster and CLI review side by side. At 390 px, ornament is 
 ## Asset plan and provenance
 
 - `site/public/capsule-poster.webp`: original raster hero generated for this product with `/opt/fleet/lib/gen-image.sh` (factory-image deployment), 2026-08-28. Prompt: “Art-deco transit poster illustration for a developer security tool; an ivory project crate travels through concentric teal and brass inspection gates toward a small amber terminal light; strict geometric screenprint, subtle paper grain, deep midnight green ground, no people, no logos, no lettering, no gradients, wide landscape composition with calm negative space.” The generated source is converted locally to WebP and kept below 300 KB. No third-party artwork.
+- `site/public/capsule-social.webp`: a 1200×630 center crop derived locally from the product’s original `capsule-poster.webp` on 2026-09-06. It is used only for social previews and adds no third-party artwork.
+- `site/public/apple-touch-icon.png`: original product-local octagonal seal, rendered from the repository’s favicon geometry on 2026-09-06. It contains no text or third-party artwork.
 - Seal, rail, ticket-notch, and capability icons are original CSS/SVG geometry drawn in the repository; no icon library.
 
 ## Why it fits

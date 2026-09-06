@@ -1,5 +1,5 @@
-const CACHE = 'capsule-shell-v1';
-const SHELL = [/* ASSET_MANIFEST */ '/', '/privacy/', '/terms/', '/capsule-poster.webp'];
+const CACHE = 'capsule-shell-v2';
+const SHELL = [/* ASSET_MANIFEST */ '/', '/demo/', '/privacy/', '/terms/', '/404.html', '/capsule-poster.webp', '/capsule-social.webp', '/apple-touch-icon.png'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(SHELL)));

@@ -24,6 +24,7 @@ Usage:
   capsule run [options]        Review, install, and run in a rootless capsule
   capsule teardown [options]   Remove a stale capsule and write a receipt
   capsule verify [options]     Probe home and network isolation live
+  capsule demo [options]       Create and inspect a bundled sample capsule
   capsule version              Print the version
 
 Common options:
@@ -86,6 +87,8 @@ func execute(ctx context.Context, args []string, stdout, stderr *os.File) int {
 		err = teardownCommand(ctx, args[1:], stdout, stderr)
 	case "verify":
 		err = verifyCommand(ctx, args[1:], stdout, stderr)
+	case "demo":
+		err = demoCommand(args[1:], stdout, stderr)
 	case "bridge":
 		err = bridgeCommand(ctx, args[1:], stderr)
 	case "self-test":
@@ -111,6 +114,34 @@ func execute(ctx context.Context, args []string, stdout, stderr *os.File) int {
 		return 4
 	}
 	return 2
+}
+
+func demoCommand(args []string, stdout, stderr io.Writer) error {
+	fs := commandFlags("demo", stderr)
+	dir := fs.String("dir", "", "new directory for the sample capsule (default: a temporary directory)")
+	jsonOut := fs.Bool("json", false, "machine-readable output")
+	fs.Usage = func() {
+		fmt.Fprintln(stderr, "Usage: capsule demo [--dir NEW_DIRECTORY] [--json]")
+	}
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+	if fs.NArg() != 0 {
+		return fmt.Errorf("unexpected arguments: %s", strings.Join(fs.Args(), " "))
+	}
+	result, err := capsule.CreateDemo(*dir)
+	if err != nil {
+		return err
+	}
+	if *jsonOut {
+		return json.NewEncoder(stdout).Encode(result)
+	}
+	fmt.Fprintln(stdout, "SAMPLE CAPSULE")
+	fmt.Fprintln(stdout, "This creates files only in a new demo folder. It does not start a container.")
+	fmt.Fprintf(stdout, "Demo folder: %s\nSample input: %s\nConfig: %s\n\n", result.Directory, result.SampleInput, result.Config)
+	fmt.Fprint(stdout, result.Review.Text())
+	fmt.Fprintf(stdout, "Next: capsule run --config %s\n", result.Config)
+	return nil
 }
 
 func commandFlags(name string, stderr io.Writer) *flag.FlagSet {

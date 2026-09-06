@@ -82,7 +82,11 @@ func WriteConfig(path string, c Config, overwrite bool) error {
 
 func (c *Config) NormalizeAndValidate() error {
 	for i := range c.AllowHosts {
-		c.AllowHosts[i] = strings.ToLower(strings.TrimSuffix(strings.TrimSpace(c.AllowHosts[i]), "."))
+		host, err := NormalizeHostname(c.AllowHosts[i])
+		if err != nil {
+			return fmt.Errorf("allow_hosts entry %q %w", c.AllowHosts[i], err)
+		}
+		c.AllowHosts[i] = host
 	}
 	sort.Strings(c.AllowHosts)
 	c.AllowHosts = uniqueStrings(c.AllowHosts)
@@ -105,8 +109,11 @@ func (c Config) Validate() error {
 		return errors.New("run command is required")
 	}
 	for _, host := range c.AllowHosts {
-		if net.ParseIP(host) != nil || !hostnamePattern.MatchString(host) || strings.ToLower(host) != host {
+		if host != strings.TrimSpace(host) || host != strings.ToLower(host) || strings.HasSuffix(host, ".") {
 			return fmt.Errorf("allow_hosts entry %q must be a lowercase ASCII hostname, not an IP address", host)
+		}
+		if _, err := NormalizeHostname(host); err != nil {
+			return fmt.Errorf("allow_hosts entry %q %w", host, err)
 		}
 	}
 	for _, port := range c.Ports {
@@ -115,6 +122,18 @@ func (c Config) Validate() error {
 		}
 	}
 	return nil
+}
+
+// NormalizeHostname returns the canonical hostname accepted by capsule init.
+// Hostnames are case-insensitive in DNS; the reviewed config always stores the
+// lower-case form without a final DNS root dot. IP literals are deliberately
+// excluded because the proxy can only safely review named destinations.
+func NormalizeHostname(value string) (string, error) {
+	host := strings.ToLower(strings.TrimSuffix(strings.TrimSpace(value), "."))
+	if net.ParseIP(host) != nil || !hostnamePattern.MatchString(host) {
+		return "", errors.New("must be a lowercase ASCII hostname, not an IP address")
+	}
+	return host, nil
 }
 
 func ConfigID(path string) string {

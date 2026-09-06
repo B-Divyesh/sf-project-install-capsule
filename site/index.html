@@ -4,9 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#091b20">
-    <meta name="description" content="Run unfamiliar projects in reviewable, rootless capsules with no host mounts and no unrestricted network.">
-    <title>Project Install Capsule — Inspect before you run</title>
+    <meta name="description" content="Run an unfamiliar GitHub project with a reviewable rootless container, named hosts, loopback ports, and a teardown receipt.">
+    <title>Project Install Capsule — Run projects safely</title>
+    <link rel="canonical" href="https://project-install-capsule.sociobot.in/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Project Install Capsule — Run projects safely">
+    <meta property="og:description" content="Review an unfamiliar project before running it in a rootless capsule.">
+    <meta property="og:image" content="https://project-install-capsule.sociobot.in/capsule-social.webp">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="https://project-install-capsule.sociobot.in/">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Project Install Capsule — Run projects safely">
+    <meta name="twitter:description" content="Review an unfamiliar project before running it in a rootless capsule.">
+    <meta name="twitter:image" content="https://project-install-capsule.sociobot.in/capsule-social.webp">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to main content</a>
@@ -18,39 +31,51 @@
       </a>
       <nav aria-label="Primary navigation">
         <a href="#route">How it works</a>
-        <a href="#compose">Try the review</a>
-        <a href="https://github.com/B-Divyesh/sf-project-install-capsule">Source</a>
+        <a href="/?demo=1">Demo</a>
+        <a href="/privacy/">Privacy</a>
+        <a href="https://github.com/B-Divyesh/sf-project-install-capsule">Source on GitHub</a>
       </nav>
     </header>
+
+    <aside id="demo-banner" class="demo-banner" aria-label="Demo status" hidden>
+      <p><strong>Demo — sample data, nothing is saved</strong><span> Your edits stay in this sample.</span></p>
+      <div><button id="reset-demo" type="button">Reset demo</button><a href="/" id="start-real">Start for real</a></div>
+    </aside>
+    <p id="route-announcer" class="sr-only" aria-live="polite"></p>
 
     <main id="main">
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero-copy rise">
-          <p class="eyebrow"><span>Line 01</span> Least-privilege project trials</p>
-          <h1 id="hero-title">Inspect the route.<br><em>Then run the code.</em></h1>
-          <p class="lede">Give an unfamiliar project an empty workspace, named destinations, and nothing else. Capsule prints the capability diff before a rootless container starts.</p>
+          <p class="eyebrow"><span>Linux CLI</span> Review before execution</p>
+          <h1 id="hero-title">Run new code with less access</h1>
+          <p class="lede">For developers testing a GitHub project without exposing their home folder, credentials, or unrestricted network.</p>
           <div class="hero-actions">
-            <a class="ticket ticket-primary" href="#install">Install Capsule</a>
-            <a class="ticket ticket-secondary" href="#compose">Preview a review</a>
+            <a class="ticket ticket-primary" href="/?demo=1">Try it with sample data</a>
+            <a class="ticket ticket-secondary" href="#install">Install the CLI</a>
           </div>
-          <p class="trust-line"><span aria-hidden="true">◆</span> Open source · No telemetry · One Go binary</p>
+          <p class="action-note">Loads a reviewed sample capsule and its exact dry-run command.</p>
+          <ul class="plain-facts">
+            <li>Free software under the MIT License.</li>
+            <li>Every host and port is declared in one file.</li>
+            <li>Containers are not complete security boundaries.</li>
+          </ul>
         </div>
         <figure class="poster rise delayed">
           <img src="/capsule-poster.webp" alt="An ivory project crate passes through three geometric inspection gates toward an amber terminal light." width="1400" height="933" fetchpriority="high">
-          <figcaption><span>Origin</span> Unfamiliar repo <span>Destination</span> Reviewed process</figcaption>
+          <figcaption><span>Input</span> Unfamiliar repository <span>Output</span> Reviewed process</figcaption>
         </figure>
       </section>
 
       <section id="route" class="route section-rule" aria-labelledby="route-title">
         <div class="section-heading">
-          <p class="eyebrow">The sealed line</p>
-          <h2 id="route-title">Four stops. No hidden transfers.</h2>
-          <p>Every grant is visible in one small file. The defaults stay shut.</p>
+          <p class="eyebrow">How it works</p>
+          <h2 id="route-title">Review the capsule before you run it</h2>
+          <p>Each step names what the project can use and what it cannot use.</p>
         </div>
         <ol class="route-map">
           <li>
             <span class="stop" aria-hidden="true">01</span>
-            <div><h3>Declare</h3><p>Name the image, install and run commands, remote hosts, and localhost ports.</p></div>
+            <div><h3>Declare</h3><p>Name the image, install command, run command, remote hosts, and loopback ports.</p></div>
           </li>
           <li>
             <span class="stop" aria-hidden="true">02</span>
@@ -58,7 +83,7 @@
           </li>
           <li>
             <span class="stop" aria-hidden="true">03</span>
-            <div><h3>Run</h3><p>Work happens in an empty tmpfs with a read-only root and an isolated network.</p></div>
+            <div><h3>Run</h3><p>Run with an empty workspace, read-only root, and no direct container network.</p></div>
           </li>
           <li>
             <span class="stop" aria-hidden="true">04</span>
@@ -69,9 +94,9 @@
 
       <section id="compose" class="composer section-rule" aria-labelledby="compose-title">
         <div class="composer-intro">
-          <p class="eyebrow">Local preview</p>
-          <h2 id="compose-title">Draft the manifest, see the boundary.</h2>
-          <p>This browser preview makes no requests and stores nothing. The real CLI validates the same hostname and port shapes.</p>
+          <p class="eyebrow">Preview the config</p>
+          <h2 id="compose-title">Check the command before you use it</h2>
+          <p>The preview accepts named hosts and rejects IP addresses. Changing it sends no requests.</p>
           <form id="capsule-composer" novalidate>
             <label for="install-command">Install command</label>
             <input id="install-command" name="install" value="git clone https://github.com/owner/project.git ." spellcheck="false">
@@ -83,7 +108,7 @@
           </form>
         </div>
         <div class="review-ticket" aria-labelledby="review-title">
-          <div class="ticket-head"><span>CAP / 001</span><span>Before departure</span></div>
+          <div class="ticket-head"><span>CAP / 001</span><span>Before running</span></div>
           <h3 id="review-title">Capability review</h3>
           <dl class="diff-list">
             <div><dt>Filesystem</dt><dd>+ empty /workspace<br>− host home<br>− project directory</dd></div>
@@ -101,40 +126,40 @@
 
       <section id="install" class="install section-rule" aria-labelledby="install-title">
         <div>
-          <p class="eyebrow">Board in two minutes</p>
-          <h2 id="install-title">One binary. One declaration.</h2>
-          <p>Build with Go 1.22+, then point Capsule at rootless Podman or rootless Docker. It never prompts, so the same path works in CI.</p>
+          <p class="eyebrow">Install and try it</p>
+          <h2 id="install-title">Run the bundled sample first</h2>
+          <p>Build with Go 1.22+, then run the sample before using your own project. Capsule requires rootless Podman or rootless Docker to start a container.</p>
         </div>
         <div class="terminal" aria-label="Terminal commands">
-          <div class="terminal-bar"><span></span><span></span><span></span><b>shell</b></div>
+          <div class="terminal-bar"><span></span><span></span><span></span><b>sample terminal</b></div>
           <pre tabindex="0"><code><span>$</span> CGO_ENABLED=0 go install github.com/B-Divyesh/\
   sf-project-install-capsule/cmd/capsule@latest
 
-<span>$</span> capsule init --install 'git clone … .' \
-  --run 'npm install &amp;&amp; npm run dev' \
-  --allow-host github.com --port 3000
+<span>$</span> capsule demo
+<b>SAMPLE CAPSULE</b>
+Demo folder: /tmp/capsule-demo-…
+Sample input: sample-project/README.md
 
-<span>$</span> capsule inspect
 <b>FILESYSTEM</b>  + empty /workspace  − host home
-<b>NETWORK</b>     − direct  + github.com via proxy
+<b>NETWORK</b>     − direct  + named HTTPS hosts
+<b>PORTS</b>       + 127.0.0.1:3000 only
 
-<span>$</span> capsule verify
-<b>PASS</b>  seeded home secret is unreadable</code></pre>
+Next: capsule run --config /tmp/capsule-demo-…/capsule.json</code></pre>
         </div>
       </section>
 
       <section class="limits section-rule" aria-labelledby="limits-title">
         <div class="limit-mark" aria-hidden="true">!</div>
         <div>
-          <p class="eyebrow">Read the fine print</p>
-          <h2 id="limits-title">A smaller blast radius, not a malware verdict.</h2>
+          <p class="eyebrow">Security limits</p>
+          <h2 id="limits-title">Use a VM for hostile code</h2>
           <p>Capsule checks the engine is rootless and removes common ambient access. Containers still share a host kernel. For deliberately hostile code, kernel exploits, or work near production credentials, use a disposable VM on a separate account.</p>
-          <a class="text-link" href="https://github.com/B-Divyesh/sf-project-install-capsule#security-model">Read the security model <span aria-hidden="true">→</span></a>
+          <a class="text-link" href="https://github.com/B-Divyesh/sf-project-install-capsule#security-model">Read the security model on GitHub <span aria-hidden="true">→</span></a>
         </div>
       </section>
 
       <section class="faq section-rule" aria-labelledby="faq-title">
-        <div class="section-heading"><p class="eyebrow">Platform notes</p><h2 id="faq-title">Questions before departure</h2></div>
+        <div class="section-heading"><p class="eyebrow">Questions</p><h2 id="faq-title">Before you run a project</h2></div>
         <div class="faq-grid">
           <details><summary>Why not just Docker?</summary><p>Docker and Podman are the engine. Capsule supplies the repeatable least-privilege route: no host mounts, explicit proxy destinations, a readable diff, and a receipt.</p></details>
           <details><summary>Can the project reach my LAN?</summary><p>No. Direct container networking is disabled. The proxy rejects IP literals and any destination resolving to loopback, private, link-local, multicast, or unspecified addresses.</p></details>
@@ -146,9 +171,9 @@
 
     <footer>
       <div class="footer-seal" aria-hidden="true">C</div>
-      <p><strong>Project Install Capsule</strong><br>Inspect the route. Then run the code.</p>
-      <nav aria-label="Footer navigation"><a href="https://github.com/B-Divyesh/sf-project-install-capsule">GitHub</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a></nav>
-      <p class="factory-note">An open-source Param Factory product.</p>
+      <p><strong>Project Install Capsule</strong><br>Review an unfamiliar project before you run it.</p>
+      <nav aria-label="Footer navigation"><a href="/?demo=1">Demo</a><a href="https://github.com/B-Divyesh/sf-project-install-capsule">Source on GitHub</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a></nav>
+      <p class="factory-note">Built by Param Factory · v0.1.0 · Build __BUILD_ID__</p>
     </footer>
     <script type="module" src="/src/main.ts"></script>
   </body>

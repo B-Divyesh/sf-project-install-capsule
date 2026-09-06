@@ -37,7 +37,7 @@ func TestProxyRejectsUndeclaredHostBeforeDNS(t *testing.T) {
 	}
 	defer proxy.Close()
 
-	transport := &http.Transport{Proxy: func(*http.Request) (*url.URL, error) { return url.Parse("http://unix.invalid") }, DialContext: func(ctx context.Context, _, _ string) (net.Conn, error) {
+	transport := &http.Transport{DisableKeepAlives: true, Proxy: func(*http.Request) (*url.URL, error) { return url.Parse("http://unix.invalid") }, DialContext: func(ctx context.Context, _, _ string) (net.Conn, error) {
 		return (&net.Dialer{}).DialContext(ctx, "unix", socket)
 	}}
 	client := &http.Client{Transport: transport}
@@ -62,5 +62,34 @@ func TestDestinationRules(t *testing.T) {
 	req.Host = "example.com:80"
 	if _, _, err := proxyDestination(req); err == nil {
 		t.Fatal("CONNECT to port 80 should be rejected")
+	}
+}
+
+// @claim:proxy-rate-limit
+func TestClaimProxyRateLimit(t *testing.T) {
+	socket := filepath.Join(t.TempDir(), "proxy.sock")
+	proxy, err := StartAllowProxy(socket, []string{"github.com"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer proxy.Close()
+
+	transport := &http.Transport{DisableKeepAlives: true, Proxy: func(*http.Request) (*url.URL, error) { return url.Parse("http://unix.invalid") }, DialContext: func(ctx context.Context, _, _ string) (net.Conn, error) {
+		return (&net.Dialer{}).DialContext(ctx, "unix", socket)
+	}}
+	client := &http.Client{Transport: transport}
+	var limited bool
+	for request := 0; request < proxyBurstLimit+8; request++ {
+		response, err := client.Get("http://not-approved.invalid/")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if response.StatusCode == http.StatusTooManyRequests {
+			limited = response.Header.Get("Retry-After") == "1"
+		}
+		response.Body.Close()
+	}
+	if !limited {
+		t.Fatal("rapid denied requests were not throttled with 429 and Retry-After")
 	}
 }

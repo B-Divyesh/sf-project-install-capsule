@@ -9,7 +9,6 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"strings"
 	"sync"
 	"time"
 )
@@ -18,6 +17,33 @@ type AllowProxy struct {
 	allowed map[string]struct{}
 	ln      net.Listener
 	wg      sync.WaitGroup
+	rate    proxyRateLimiter
+}
+
+const (
+	proxyBurstLimit  = 24
+	proxyBurstWindow = time.Second
+)
+
+type proxyRateLimiter struct {
+	mu       sync.Mutex
+	requests []time.Time
+}
+
+func (l *proxyRateLimiter) Allow(now time.Time) bool {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	cutoff := now.Add(-proxyBurstWindow)
+	first := 0
+	for first < len(l.requests) && !l.requests[first].After(cutoff) {
+		first++
+	}
+	l.requests = append(l.requests[:0], l.requests[first:]...)
+	if len(l.requests) >= proxyBurstLimit {
+		return false
+	}
+	l.requests = append(l.requests, now)
+	return true
 }
 
 func StartAllowProxy(socketPath string, hosts []string) (*AllowProxy, error) {
@@ -32,7 +58,12 @@ func StartAllowProxy(socketPath string, hosts []string) (*AllowProxy, error) {
 	}
 	p := &AllowProxy{allowed: make(map[string]struct{}, len(hosts)), ln: ln}
 	for _, host := range hosts {
-		p.allowed[strings.ToLower(host)] = struct{}{}
+		canonical, err := NormalizeHostname(host)
+		if err != nil {
+			ln.Close()
+			return nil, fmt.Errorf("configure allowed host %q: %w", host, err)
+		}
+		p.allowed[canonical] = struct{}{}
 	}
 	p.wg.Add(1)
 	go p.serve()
@@ -73,6 +104,10 @@ func (p *AllowProxy) handle(client net.Conn) {
 		return
 	}
 	defer req.Body.Close()
+	if !p.rate.Allow(time.Now()) {
+		writeProxyRateLimit(client)
+		return
+	}
 
 	host, port, err := proxyDestination(req)
 	if err != nil {
@@ -132,8 +167,8 @@ func proxyDestination(req *http.Request) (string, string, error) {
 }
 
 func normalizeProxyHost(host string) (string, string, error) {
-	host = strings.ToLower(strings.TrimSuffix(host, "."))
-	if net.ParseIP(host) != nil || !hostnamePattern.MatchString(host) {
+	host, err := NormalizeHostname(host)
+	if err != nil {
 		return "", "", errors.New("destination must be an allowed hostname, not an IP address")
 	}
 	return host, "443", nil
@@ -171,6 +206,11 @@ func stripProxyHeaders(h http.Header) {
 func writeProxyError(w io.Writer, status int, message string) {
 	body := message + "\n"
 	fmt.Fprintf(w, "HTTP/1.1 %d %s\r\nContent-Type: text/plain\r\nContent-Length: %d\r\nConnection: close\r\n\r\n%s", status, http.StatusText(status), len(body), body)
+}
+
+func writeProxyRateLimit(w io.Writer) {
+	body := "too many proxy requests; wait one second and try again\n"
+	fmt.Fprintf(w, "HTTP/1.1 429 Too Many Requests\r\nContent-Type: text/plain\r\nContent-Length: %d\r\nRetry-After: 1\r\nConnection: close\r\n\r\n%s", len(body), body)
 }
 
 func copyBoth(a, b net.Conn) {

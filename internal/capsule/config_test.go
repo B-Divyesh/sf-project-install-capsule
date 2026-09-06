@@ -74,3 +74,17 @@ func TestLoadRejectsUnknownAndTrailingFields(t *testing.T) {
 		}
 	}
 }
+
+func TestHostnameNormalizationAcceptsDNSCaseAndRootDot(t *testing.T) {
+	c := Config{Version: 1, Image: "node:22", Install: "npm ci", Run: "npm start", AllowHosts: []string{"EXAMPLE.COM.", "127.0.0.1"}}
+	if err := c.NormalizeAndValidate(); err == nil || !strings.Contains(err.Error(), "not an IP") {
+		t.Fatalf("IP literal must still fail after normalization: %v", err)
+	}
+	c.AllowHosts = []string{"EXAMPLE.COM."}
+	if err := c.NormalizeAndValidate(); err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(c.AllowHosts, []string{"example.com"}) {
+		t.Fatalf("canonical hosts = %#v", c.AllowHosts)
+	}
+}

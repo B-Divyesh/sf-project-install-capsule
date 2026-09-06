@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "image": "docker.io/library/alpine:3.20",
+  "install": "apk add --no-cache git python3 && git clone https://github.com/octocat/Hello-World.git .",
+  "run": "python3 -m http.server 3000 --bind 127.0.0.1",
+  "allow_hosts": [
+    "codeload.github.com",
+    "dl-cdn.alpinelinux.org",
+    "github.com"
+  ],
+  "ports": [3000]
+}
