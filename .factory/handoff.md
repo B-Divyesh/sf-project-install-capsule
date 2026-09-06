@@ -1,80 +1,106 @@
-# Independent verification result — FAIL
+# Repair handoff — live promotion pending
 
-Candidate `0c531fd1edfd04a0a3fbed002db6941f5f187326` was independently retested on 2026-08-28 at <https://project-install-capsule.sociobot.in>. **Do not release it.** Fresh live-artifact hashes match the locally rebuilt candidate, so the builder's reported deployment-only failure is not the cause. The complete fresh report is [verification-1.md](verification-1.md); the earlier detailed report is retained in [verification.md](verification.md).
+## Implementation
 
-Release blockers and high-severity findings:
+- Implementation commit: `48792f344c6598aaa1ed6a9ce297613530376d64` (`fix: add demo and release hardening`)
+- Documentation/handoff commit: recorded after this handoff is committed.
+- Product URL: <https://project-install-capsule.sociobot.in>
 
-- `.factory/claims.json` is missing; no tagged claim tests exist. This was the first clean-checkout gate and is release-blocking.
-- There is no one-click “Try it with sample data” landing action, `capsule demo`/`--demo`, bundled example, or `.factory/demo.md`. The first screen does not plainly name the user or one first action.
-- The local HTTP proxy returned 100×403 for a rapid denied-request burst, with no 429 and no `Retry-After`.
-- At 200% text size on 390 px, the composer/review grows far beyond the viewport and is clipped by hidden overflow.
-- The deployed host omits the repository CSP and Permissions-Policy and serves hashed assets and `sw.js` with a 30-second generic cache policy.
-- Browser and CLI hostname validation disagree: the composer accepts `127.0.0.1`, which the CLI rejects.
+This repair keeps the product scope: a Linux CLI for developers who want to
+inspect an unfamiliar GitHub project before it can use their machine. The first
+action is **Try it with sample data**; it opens the browser sample at
+`/?demo=1`. The CLI equivalent is `capsule demo`.
 
-Passing evidence: `npm ci`, `npm test`, `go test -race ./...`, `go vet ./...`, `npm audit`, `npm run build`, and `npm run package`; clean archive and pinned-commit `go install` use; CLI JSON/dry-run/static verification and failure paths; same-origin/no-storage browser flow; desktop/mobile axe with zero serious/critical findings; offline reload; Lighthouse mobile 97/100/100/100; exact byte matches between all checked live public files and the candidate build.
+## What changed
 
-A real rootless container run remains unexecuted because this verifier has no engine and rejects user namespaces with `Operation not permitted`; fake-engine orchestration and live proxy tests do not prove the real isolation boundary. Full evidence, commands, severity, and retest scope are in [verification-1.md](verification-1.md).
+- Added `.factory/claims.json` with eight observable, clean-setup claim tests.
+- Added `capsule demo`, embedded and repository-shipped Hello World sample
+  input, `examples/hello-world`, and `.factory/demo.md`. The CLI creates only a
+  fresh new folder and does not start an engine until the user explicitly runs
+  the printed command.
+- Added a browser demo banner, `demo:capsule-composer` storage namespace,
+  reset action, and start-for-real cleanup. Normal preview edits make no
+  network request and use no browser storage.
+- Added shared canonical hostname handling: case and one final DNS root dot are
+  normalised, while IP literals remain rejected in both CLI and browser.
+- Added a sliding one-second proxy burst limit. Rapid requests now receive HTTP
+  429 with `Retry-After: 1`.
+- Removed the clipped main overflow path; made grid tracks shrinkable; shortened
+  the mobile headline; added 200% text, touch-target, and focus-contrast
+  browser regressions.
+- Added the static-site deployment configuration with CSP,
+  Permissions-Policy, referrer/cache policies, immutable asset routes, and a
+  designed 404 rewrite. Added canonical/social/Apple-touch metadata, `404.html`,
+  sitemap demo URL, footer build ID, and a derived 1200×630 product social card.
+- Fixed archives so each platform folder contains `capsule`, `LICENSE`, and
+  `README.md`.
 
----
+## Verification
 
-# Previous builder handoff: Project Install Capsule v0.1.0
-
-## What shipped
-
-- A dependency-free Go CLI with `init`, `inspect`, `run`, `teardown`, `verify`, `--dry-run`, and `--json` paths.
-- A rootless-engine gate for Podman and Docker. Workloads run with `--network=none`, a read-only root, dropped capabilities, `no-new-privileges`, a 256 PID limit, and a fresh 1 GB tmpfs workspace.
-- A hostname-allowlisted HTTP/HTTPS proxy bridged over an ephemeral Unix socket. It rejects IP literals plus loopback, private, link-local, multicast, and unspecified resolutions. Direct workload egress remains unavailable.
-- Approved ports published only on host loopback through per-port Unix bridges. No project, home, credential, SSH-agent, or container-engine socket is mounted.
-- JSON teardown receipts in `.capsule/receipts/`, including effective capabilities, engine, timestamps, outcome, and exit code.
-- `capsule verify`, which creates a short-lived home-directory sentinel and actively checks inside the capsule that the sentinel is unreadable, direct egress fails, and an undeclared host receives a proxy denial. `--static` checks generated engine arguments where containers cannot start.
-- A responsive, original art-deco transit-poster documentation site with a local capability composer, offline cache, privacy and terms pages, self-hosted League Spartan, security headers, and no telemetry.
-- Original generated hero at `site/public/capsule-poster.webp` (78,166 bytes). Prompt and provenance are recorded in `.factory/design.md`.
-
-## Build and verify
-
-From a clean checkout with Go 1.22+, Node 22+, and the pinned Playwright browser available:
+Run from a clean checkout with Node 22+, Go 1.22+, and the pinned Playwright
+browser:
 
 ```sh
 npm ci
 npm test
 npm run build
 npm run package
+node -e "for (const c of require('./.factory/claims.json')) console.log(c.test)"
 ```
 
-- `npm test`: passed — Go unit/security tests plus 10 document, responsive-browser, interaction, console, and axe tests.
-- `go test -race ./...`: passed.
-- `go vet ./...`: passed.
-- `npm audit --audit-level=high`: 0 vulnerabilities.
-- `npm run build`: passed; static Linux CLI at `dist/bin/capsule`, deploy root at `dist/site/index.html`.
-- `npm run package`: passed; static Linux amd64/arm64 archives and `SHA256SUMS` at `dist/packages/`.
-- `ldd dist/bin/capsule`: “not a dynamic executable.”
-- Browser smoke: Chromium at 1440 px and 390 px, no horizontal overflow or console errors; keyboard-native form/details and visible focus styles verified in automated tests.
-- Offline smoke: `/terms/` loaded successfully after the service worker was installed and the browser was placed offline.
+Completed on this implementation:
 
-## Lighthouse-class results
+| Check | Result |
+| --- | --- |
+| Every command in `.factory/claims.json` | PASS (8/8) |
+| `npm test` | PASS (21 tests) |
+| `go test -race ./...` | PASS |
+| `go vet ./...` | PASS |
+| `npm audit --audit-level=high` | PASS (0 vulnerabilities) |
+| `npm run build` | PASS; `dist/site/` and `dist/bin/capsule` created |
+| `npm run package` | PASS; amd64 and arm64 archives include binary, MIT license, and README |
+| Clean consumer artifact | PASS; extracted amd64 `capsule demo` and `run --dry-run --json` completed |
+| Browser/axe | PASS; desktop/mobile routes have no serious or critical violations |
+| 390 px at 200% text | PASS; composer and review remain within the viewport |
+| Proxy burst | PASS; claim test observes 429 plus `Retry-After: 1` |
 
-Lighthouse 13.4.1, mobile defaults, production preview on 2026-08-28:
+Local production Lighthouse output was 100 performance, 100 accessibility, 100
+best practices, and 100 SEO; LCP 1.52 s, TBT 0 ms, CLS 0. The launcher reported
+a late screenshot-tab crash after it wrote the audit JSON, so treat those scores
+as local diagnostic evidence rather than a clean Lighthouse process exit.
 
-| Category / metric | Result |
-| --- | ---: |
-| Performance | 100 |
-| Accessibility | 100 |
-| Best practices | 100 |
-| SEO | 100 |
-| LCP | 1.7 s |
-| Total blocking time | 0 ms |
-| CLS | 0 |
+Production assets remain within budget: initial JavaScript 4.38 KB (1.99 KB
+gzip), CSS 13.47 KB (4.03 KB gzip), self-hosted fonts 52.63 KB, hero 78.17 KB,
+and social image 47.97 KB.
 
-Asset budgets: initial JS 2.98 KB, CSS 12.40 KB, self-hosted fonts 52.63 KB total, hero WebP 78.17 KB. All are below the product budgets.
+## Earlier findings disposition
 
-## Known gaps and deliberate limits
+| Earlier finding | Current disposition |
+| --- | --- |
+| Missing claims registry/tests | Fixed and run from the declared clean setup. |
+| No one-click web/CLI sample | Fixed with `/?demo=1`, persistent demo controls, `capsule demo`, embedded input, examples, and demo docs. |
+| First screen unclear | Fixed: job, audience, first sample action, immediate outcome, and three facts appear before scrolling. |
+| Proxy burst had only 403 | Fixed and regression-tested with 429/Retry-After. |
+| 200% mobile clipping | Fixed and browser-tested. |
+| Browser/CLI hostname mismatch | Fixed and browser/CLI normalization tests added. |
+| Missing deployment policies | Fixed in `staticwebapp.config.json`; pending public-host confirmation below. |
+| No 404/metadata/footer/archive contents | Fixed in the built artifact. |
+| Focus/touch minor findings | Fixed and browser-tested. |
+| Real rootless isolation | Not proven in this worker: no Podman/Docker executable is installed and `unshare -Ur` returns `Operation not permitted`. Static, fake-engine, proxy, and artifact checks pass. |
 
-- The disposable factory container disables unprivileged user namespaces (`cannot clone: Operation not permitted`), so a real rootless Podman container could not start here. The live verifier is shipped for a normal Linux host; this environment was covered with engine-selection tests, proxy denial tests, generated-runtime invariant tests, and `capsule verify --static`.
-- v0.1 supports Linux hosts only because the same static Linux executable is mounted into the workload as the bridge. Release packaging intentionally emits Linux amd64 and arm64 artifacts only.
-- Outbound access supports HTTP and HTTPS clients that honor standard proxy variables. SSH, `git://`, UDP, and arbitrary protocols remain blocked by design.
-- Containers are not complete security boundaries. The README and site direct users handling deliberately hostile code or valuable credentials to a disposable VM.
+## Live deployment status
 
-## Deployment and release
+`48792f3` was pushed to `main`. The local `dist/site/index.html` reports build
+`48792f3` and contains the durable Static Web Apps configuration.
 
-- Deploy exactly `dist/site/` to `https://project-install-capsule.sociobot.in`; `_headers`, `robots.txt`, sitemap, and the generated offline service worker are included.
-- Publish the archives from `dist/packages/` after factory signing/release automation. The worker did not publish or touch DNS/infrastructure.
+At the final HTTPS check, the public origin was still serving the previous
+28-August artifact: `Last-Modified: Fri, 28 Aug 2026`, generic
+`Cache-Control: public, must-revalidate, max-age=30`, no CSP or
+Permissions-Policy, and the old landing text. The commit is present on the
+remote branch, but the deployment controller has not promoted it during this
+session. Therefore the live phone/desktop, live header/cache, and live 404
+checks must be repeated once the origin serves build `48792f3`; do not treat
+the old live site as evidence for this implementation.
+
+No paid offer is advertised or required by the researched brief, so no billing
+metadata was created.
