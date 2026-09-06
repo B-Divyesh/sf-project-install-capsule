@@ -1,9 +1,30 @@
-# Repair handoff — live promotion pending
+# Verification 2 handoff — live promoted, acceptance blocked
+
+## Independent verification 2
+
+- Verdict: **FAIL**
+- Finding count: **5**
+- Untested public claim count: **1**
+- Implementation reviewed: `48792f344c6598aaa1ed6a9ce297613530376d64`
+- Documentation baseline: `1e0fe68b6b4350192c77da6601e66bdb6480c6f8`
+- Full report: `.factory/verification-2.md`
+
+The repaired artifact is now live. Its footer reports build `1e0fe68`, and its
+public files match a clean production build. All eight declared claim commands,
+the 21-test suite, race detector, vet, audit, build, packaging, browser demo,
+live accessibility checks, offline reload, and Lighthouse run pass.
+
+Acceptance remains blocked. The real seeded-home and network isolation probe
+could not run because this worker forbids user namespaces, so the core runtime
+promise remains untested. The CLI demo prints a review but does not run bundled
+sample data. Public claims remain outside `.factory/claims.json`. The GitHub
+security-model fragment is missing, and the earlier responsive-image finding
+remains.
 
 ## Implementation
 
 - Implementation commit: `48792f344c6598aaa1ed6a9ce297613530376d64` (`fix: add demo and release hardening`)
-- Documentation/handoff commit: recorded after this handoff is committed.
+- Documentation/handoff baseline: `1e0fe68b6b4350192c77da6601e66bdb6480c6f8`.
 - Product URL: <https://project-install-capsule.sociobot.in>
 
 This repair keeps the product scope: a Linux CLI for developers who want to
@@ -77,30 +98,27 @@ and social image 47.97 KB.
 
 | Earlier finding | Current disposition |
 | --- | --- |
-| Missing claims registry/tests | Fixed and run from the declared clean setup. |
-| No one-click web/CLI sample | Fixed with `/?demo=1`, persistent demo controls, `capsule demo`, embedded input, examples, and demo docs. |
+| Missing claims registry/tests | Partly fixed: eight declared claims pass, but public claims remain outside the registry. |
+| No one-click web/CLI sample | Web demo fixed. The CLI command only prepares and reviews a sample; it does not run the main job. |
 | First screen unclear | Fixed: job, audience, first sample action, immediate outcome, and three facts appear before scrolling. |
 | Proxy burst had only 403 | Fixed and regression-tested with 429/Retry-After. |
 | 200% mobile clipping | Fixed and browser-tested. |
 | Browser/CLI hostname mismatch | Fixed and browser/CLI normalization tests added. |
-| Missing deployment policies | Fixed in `staticwebapp.config.json`; pending public-host confirmation below. |
-| No 404/metadata/footer/archive contents | Fixed in the built artifact. |
+| Missing deployment policies | Fixed and confirmed on the public origin. |
+| No 404/metadata/footer/archive contents | Fixed in the built and live artifacts. |
 | Focus/touch minor findings | Fixed and browser-tested. |
-| Real rootless isolation | Not proven in this worker: no Podman/Docker executable is installed and `unshare -Ur` returns `Operation not permitted`. Static, fake-engine, proxy, and artifact checks pass. |
+| Real rootless isolation | Still not proven: Docker 29 was installed, but this worker forbids user namespaces and no rootless daemon can run. |
+| Hero lacks responsive sources | Still present: the 1400 px image has no `srcset` or `sizes`. |
 
 ## Live deployment status
 
-`48792f3` was pushed to `main`. The local `dist/site/index.html` reports build
-`48792f3` and contains the durable Static Web Apps configuration.
-
-At the final HTTPS check, the public origin was still serving the previous
-28-August artifact: `Last-Modified: Fri, 28 Aug 2026`, generic
-`Cache-Control: public, must-revalidate, max-age=30`, no CSP or
-Permissions-Policy, and the old landing text. The commit is present on the
-remote branch, but the deployment controller has not promoted it during this
-session. Therefore the live phone/desktop, live header/cache, and live 404
-checks must be repeated once the origin serves build `48792f3`; do not treat
-the old live site as evidence for this implementation.
+The public origin now serves the repaired site and reports build `1e0fe68`.
+HTML and `sw.js` use `Cache-Control: no-cache`; tested static assets use
+one-year immutable caching. CSP, Permissions-Policy,
+`Referrer-Policy: no-referrer`, and `X-Content-Type-Options: nosniff` are
+present. Unknown routes return the designed page with HTTP 404. Live browser,
+header, cache, metadata, legal-page, and 404 checks were repeated during
+verification 2.
 
 No paid offer is advertised or required by the researched brief, so no billing
 metadata was created.
